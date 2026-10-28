@@ -16,6 +16,11 @@
 			path = challenge6;
 			sourceTree = "<group>";
 		};
+		A01B33FC309268E70040234B /* Networking */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Networking;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -32,6 +37,7 @@
 			children = (
 				000000000000000000000010 /* challenge6 */,
 				000000000000000000000020 /* Products */,
+				A01B33FC309268E70040234B /* Networking */,
 			);
 			sourceTree = "<group>";
 		};
@@ -58,6 +64,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				000000000000000000000010 /* challenge6 */,
+				A01B33FC309268E70040234B /* Networking */,
 			);
 			name = challenge6;
 			productName = MyApp;

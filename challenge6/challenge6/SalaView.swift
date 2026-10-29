@@ -50,5 +50,9 @@ struct SalaView: View {
             }
         }
         .padding()
+        .onAppear {
+            print("ID recebido:", salaID)
+            print("URL gerada:", urlSala)
+        }
     }
 }

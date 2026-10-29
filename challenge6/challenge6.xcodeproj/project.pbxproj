@@ -61,6 +61,11 @@
 			path = AppClip;
 			sourceTree = "<group>";
 		};
+		A0D237943093C1DA00487F4D /* Networking */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Networking;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,6 +88,7 @@
 				000000000000000000000010 /* challenge6 */,
 				7B104508309272CF000A003E /* AppClip */,
 				000000000000000000000020 /* Products */,
+				A0D237943093C1DA00487F4D /* Networking */,
 			);
 			sourceTree = "<group>";
 		};
@@ -132,6 +138,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				7B104508309272CF000A003E /* AppClip */,
+				A0D237943093C1DA00487F4D /* Networking */,
 			);
 			name = AppClip;
 			productName = AppClip;

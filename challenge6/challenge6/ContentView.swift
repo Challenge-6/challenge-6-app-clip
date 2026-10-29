@@ -1,11 +1,14 @@
 import SwiftUI
 
+struct Sala: Identifiable {
+    let id: String
+}
+
 struct ContentView: View {
 
     @AppStorage("nickname") private var nickname = ""
 
-    @State private var salaCriadaID = ""
-    @State private var mostrarSala = false
+    @State private var salaCriada: Sala?
     @State private var nomeDigitado = ""
 
     var body: some View {
@@ -19,8 +22,8 @@ struct ContentView: View {
             }
 
         }
-        .sheet(isPresented: $mostrarSala) {
-            SalaView(salaID: salaCriadaID)
+        .sheet(item: $salaCriada) { sala in
+            SalaView(salaID: sala.id)
         }
     }
 
@@ -79,19 +82,19 @@ struct ContentView: View {
                 .foregroundStyle(.secondary)
 
             Button {
+                let novoID = String(UUID().uuidString.prefix(6))
 
-                salaCriadaID = String(UUID().uuidString.prefix(6))
-                mostrarSala = true
+                print("ID gerado:", novoID)
+
+                salaCriada = Sala(id: novoID)
 
             } label: {
-
                 Label("Criar sala", systemImage: "plus.circle")
                     .frame(maxWidth: .infinity)
                     .padding()
-
             }
             .buttonStyle(.borderedProminent)
-            .buttonStyle(.borderedProminent)
+            
             Button {
                 print("Entrar na sala")
             } label: {

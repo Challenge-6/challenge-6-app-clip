@@ -10,10 +10,12 @@ import SwiftUI
 struct EntrarSalaView: View {
 
     @AppStorage("nickname") private var nickname = ""
+    @State private var mostrandoScanner = false
+
 
     @State private var salaID = ""
     @State private var entrouNaSala = false
-    let clientService = ClientService()
+    @State private var clientService = ClientService()
 
     var body: some View {
         VStack(spacing: 24) {
@@ -32,10 +34,17 @@ struct EntrarSalaView: View {
                 .autocorrectionDisabled()
 
             Button("Entrar") {
-                clientService.connect()
-                entrouNaSala = true
+                mostrandoScanner = true
             }
-            .buttonStyle(.borderedProminent)
+            .sheet(isPresented: $mostrandoScanner) {
+                QRScannerView { text in
+                    mostrandoScanner = false
+                    if let (host, port) = parseHost(text) {
+                        clientService.connect(to: host, port: port)
+                        entrouNaSala = true
+                    }
+                }
+            }            .buttonStyle(.borderedProminent)
             .disabled(
                 salaID.trimmingCharacters(
                     in: .whitespacesAndNewlines

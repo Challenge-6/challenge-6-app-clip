@@ -36,7 +36,6 @@ struct SalaView: View {
                 .padding()
             }
             .buttonStyle(.borderedProminent)
-           
 
             ZStack {
                 Circle()
@@ -61,9 +60,6 @@ struct SalaView: View {
                 .multilineTextAlignment(.center)
 
             Spacer()
-
-            
-
         }
         .padding()
         .navigationTitle("Sorteio")
@@ -73,7 +69,6 @@ struct SalaView: View {
         }
     }
 }
-
 
 #Preview {
     NavigationStack {

@@ -5,9 +5,11 @@
 //  Created by Gabriel Groppo on 04/11/26.
 //
 
+
 import SwiftUI
 
 struct QRCodeSheetView: View {
+
     let salaID: String
 
     @Environment(\.dismiss) private var dismiss
@@ -21,9 +23,8 @@ struct QRCodeSheetView: View {
     var body: some View {
         VStack(spacing: 24) {
             
-            Button("Fechar") {
-                dismiss()
-            }
+            
+            
             Text("Convidar participantes")
                 .font(.largeTitle)
                 .bold()
@@ -55,9 +56,28 @@ struct QRCodeSheetView: View {
                 )
             }
 
-            
+            Spacer()
         }
         .padding()
+        .padding(.top, 80)
+        .overlay(alignment: .topLeading) {
+            Button {
+                dismiss()
+            } label: {
+                Image(systemName: "xmark")
+                    .font(.system(size: 22, weight: .semibold))
+                    .foregroundStyle(.primary)
+                    .frame(width: 44, height: 44)
+                    .background(.quaternary, in: Circle())
+            }
+            .accessibilityLabel("Fechar")
+            .padding(.leading, 20)
+            .padding(.top, 16)
+        }
     }
+}
+
+#Preview {
+    QRCodeSheetView(salaID: "ABC123")
 }
 

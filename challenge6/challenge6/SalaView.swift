@@ -20,7 +20,6 @@ struct SalaView: View {
 
     var body: some View {
         VStack(spacing: 24) {
-
             Text("Sala \(salaID)")
                 .font(.title2)
                 .bold()
@@ -32,12 +31,11 @@ struct SalaView: View {
                     "Convidar participantes",
                     systemImage: "qrcode"
                 )
-                .frame(maxWidth: .infinity)
-                .padding()
+                .frame(maxWidth: 240)
+                .padding(5)
             }
             .buttonStyle(.borderedProminent)
            
-
             ZStack {
                 Circle()
                     .fill(.blue.opacity(0.15))
@@ -73,7 +71,6 @@ struct SalaView: View {
         }
     }
 }
-
 
 #Preview {
     NavigationStack {

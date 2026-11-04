@@ -12,6 +12,7 @@ struct ContentView: View {
     @State private var mostrarEntradaSala = false
     @State private var salaCriada: Sala?
     @State private var nomeDigitado = ""
+    let server = HostService()
 
     var body: some View {
 
@@ -115,6 +116,7 @@ struct ContentView: View {
                 let novoID = String(UUID().uuidString.prefix(6))
 
                 print("ID gerado:", novoID)
+                server.initListener()
 
                 salaCriada = Sala(id: novoID)
 
@@ -122,6 +124,7 @@ struct ContentView: View {
                 Label("Criar sala", systemImage: "plus.circle")
                     .frame(maxWidth: .infinity)
                     .padding()
+                
             }
             .buttonStyle(.borderedProminent)
             

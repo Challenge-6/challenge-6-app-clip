@@ -10,7 +10,8 @@ import Network
 
 class HostService {
     private var listener: NWListener?
-    private var connections: [NWConnection] = []
+    var connections: [NWConnection] = []
+    var players: [Player] = []
     
     
     func initListener(){
@@ -43,6 +44,19 @@ class HostService {
             guard let self else { return }
             print("novo cliente foi conectado: \(connection.endpoint)")
             self.connections.append(connection)
+            let player = Player(connection: connection)
+
+            players.append(player)
+
+            connection.stateUpdateHandler = { state in
+
+                if case .ready = state {
+
+                    player.receiveNickname { nickname in
+                        print("Jogador conectado: \(nickname)")
+                    }
+                }
+            }
             connection.start(queue: .main)
             self.message(connection: connection)
         }
@@ -67,6 +81,7 @@ class HostService {
         }
         
     }
+
     func stop() {
         listener?.cancel()
         connections.forEach { $0.cancel() }

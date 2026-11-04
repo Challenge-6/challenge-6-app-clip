@@ -57,6 +57,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				EntrarSalaView.swift,
+				Player.swift,
 				QrCodeScanner.swift,
 			);
 			target = 7B104506309272CF000A003E /* AppClip */;

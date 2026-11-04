@@ -9,6 +9,7 @@ import SwiftUI
 
 struct SalaView: View {
     let salaID: String
+    @State private var hostService = HostService()
 
     @State private var mostrarQRCode = false
 
@@ -53,6 +54,10 @@ struct SalaView: View {
 
                     Text("\(participantes.count) participantes")
                         .foregroundStyle(.secondary)
+                    ForEach(hostService.players) { player in
+                        Text(player.nickname ?? "Conectando...")
+                    }
+
                 }
             }
 

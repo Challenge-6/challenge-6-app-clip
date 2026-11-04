@@ -12,10 +12,13 @@ struct QRCodeSheetView: View {
 
     let salaID: String
 
+    
     @Environment(\.dismiss) private var dismiss
 
     private let qrCodeGenerator = QRCodeGenerator()
 
+    @State private var hostService = HostService()
+   
     private var urlSala: String {
         "https://example.com/sala?id=\(salaID)"
     }
@@ -33,8 +36,9 @@ struct QRCodeSheetView: View {
                 .font(.headline)
 
             if let imagem = qrCodeGenerator.gerarQRCode(
-                texto: urlSala
+                texto: "\(hostService.localIPAddress() ?? ""):5252"
             ) {
+
                 Image(uiImage: imagem)
                     .interpolation(.none)
                     .resizable()

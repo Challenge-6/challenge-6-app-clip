@@ -8,6 +8,8 @@ struct ContentView: View {
 
     @AppStorage("nickname") private var nickname = ""
 
+    @State private var salaRecebidaID: String?
+    @State private var mostrarEntradaSala = false
     @State private var salaCriada: Sala?
     @State private var nomeDigitado = ""
 
@@ -19,11 +21,40 @@ struct ContentView: View {
                 telaCadastro
             } else {
                 telaInicial
+                    .onAppear {
+                        if let url = URL(string: "https://example.com/sala?id=ABC123"
+                        ) {
+                            receberURL(url)
+                        }
+                    }
             }
 
         }
         .sheet(item: $salaCriada) { sala in
             SalaView(salaID: sala.id)
+        }
+        .sheet(isPresented: $mostrarEntradaSala) {
+            EntrarSalaView()
+        }
+        .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) { activity in
+            guard let url = activity.webpageURL else { return }
+            receberURL(url)
+        }
+        .onOpenURL { url in
+            receberURL(url)
+        }
+        .alert(
+            "Convite recebido",
+            isPresented: Binding(
+                get: { salaRecebidaID != nil },
+                set: { if !$0 { salaRecebidaID = nil } }
+            )
+        ) {
+            Button("OK") {
+                salaRecebidaID = nil
+            }
+        } message: {
+            Text("Olá, \(nickname)! Convite para a sala \(salaRecebidaID ?? "").")
         }
     }
 
@@ -46,7 +77,6 @@ struct ContentView: View {
 
             TextField("Digite seu nome", text: $nomeDigitado)
                 .textFieldStyle(.roundedBorder)
-                .textInputAutocapitalization(.words)
                 .autocorrectionDisabled()
 
             Button("Continuar") {
@@ -96,7 +126,7 @@ struct ContentView: View {
             .buttonStyle(.borderedProminent)
             
             Button {
-                print("Entrar na sala")
+                mostrarEntradaSala = true
             } label: {
                 Label("Entrar na sala", systemImage: "arrow.right.circle")
                     .frame(maxWidth: .infinity)
@@ -104,7 +134,7 @@ struct ContentView: View {
             }
             .buttonStyle(.bordered)
 
-            Button("Alterar nickname") {
+            Button("Alterar nome") {
                 nickname = ""
                 nomeDigitado = ""
             }
@@ -112,6 +142,26 @@ struct ContentView: View {
 
         }
         .padding()
+    }
+    
+    private func receberURL(_ url: URL) {
+        guard let components = URLComponents(
+            url: url,
+            resolvingAgainstBaseURL: false
+        ),
+        components.scheme == "https",
+        components.host == "example.com",
+        components.path == "/sala",
+        let id = components.queryItems?
+            .first(where: { $0.name == "id" })?
+            .value,
+        !id.isEmpty else {
+            return
+        }
+
+        print("Sala recebida pelo aplicativo completo:", id)
+
+        salaRecebidaID = id
     }
 }
 

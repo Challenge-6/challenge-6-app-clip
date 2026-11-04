@@ -49,6 +49,13 @@
             ReferencedContainer = "container:challenge6.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <EnvironmentVariables>
+         <EnvironmentVariable
+            key = "_XCAppClipURL"
+            value = "https://example.com/sala?id=ABC123"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+      </EnvironmentVariables>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"

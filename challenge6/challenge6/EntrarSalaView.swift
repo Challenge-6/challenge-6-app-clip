@@ -15,8 +15,7 @@ struct EntrarSalaView: View {
 
     @State private var salaID = ""
     @State private var entrouNaSala = false
-    let clientService = ClientService()
-    let cameraScan = ScannerController()
+    @State private var clientService = ClientService()
 
     var body: some View {
         VStack(spacing: 24) {

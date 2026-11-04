@@ -15,11 +15,11 @@ class HostService {
     
     func initListener(){
         let parameters = NWParameters.tcp
-        parameters.requiredInterfaceType = .loopback
-        parameters.requiredLocalEndpoint = NWEndpoint.hostPort(host: "127.0.0.1", port: 8080)
+        //parameters.requiredInterfaceType = .loopback
+        //parameters.requiredLocalEndpoint = NWEndpoint.hostPort(host: "127.0.0.1", port: 8080)
         
         do {
-            listener = try NWListener(using: parameters)
+            listener = try NWListener(using: parameters, on: 5252)
         } catch {
             print("erro ao iniciar o listener \(error)")
             return
@@ -70,5 +70,24 @@ class HostService {
     func stop() {
         listener?.cancel()
         connections.forEach { $0.cancel() }
+    }
+    
+    func localIPAddress() -> String? {
+        var address: String?
+        var ifaddr: UnsafeMutablePointer<ifaddrs>?
+        guard getifaddrs(&ifaddr) == 0, let first = ifaddr else { return nil }
+        defer { freeifaddrs(ifaddr) }
+
+        for ptr in sequence(first: first, next: { $0.pointee.ifa_next }) {
+            let interface = ptr.pointee
+            guard interface.ifa_addr.pointee.sa_family == UInt8(AF_INET),
+                  String(cString: interface.ifa_name) == "en0" else { continue }
+
+            var host = [CChar](repeating: 0, count: Int(NI_MAXHOST))
+            getnameinfo(interface.ifa_addr, socklen_t(interface.ifa_addr.pointee.sa_len),
+                        &host, socklen_t(host.count), nil, 0, NI_NUMERICHOST)
+            address = String(cString: host)
+        }
+        return address
     }
 }

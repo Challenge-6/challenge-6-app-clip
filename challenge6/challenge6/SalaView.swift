@@ -10,6 +10,7 @@ import SwiftUI
 struct SalaView: View {
 
     let salaID: String
+    let hostService = HostService()
 
     private let qrCodeGenerator = QRCodeGenerator()
 
@@ -29,7 +30,7 @@ struct SalaView: View {
                 .font(.headline)
 
             if let imagem = qrCodeGenerator.gerarQRCode(
-                texto: urlSala
+                texto: urlSala + "\(String(describing: hostService.localIPAddress()))"
             ) {
 
                 Image(uiImage: imagem)

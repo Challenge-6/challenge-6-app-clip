@@ -36,6 +36,7 @@ struct SalaView: View {
             }
             .buttonStyle(.borderedProminent)
            
+
             ZStack {
                 Circle()
                     .fill(.blue.opacity(0.15))
@@ -59,9 +60,6 @@ struct SalaView: View {
                 .multilineTextAlignment(.center)
 
             Spacer()
-
-            
-
         }
         .padding()
         .navigationTitle("Sorteio")

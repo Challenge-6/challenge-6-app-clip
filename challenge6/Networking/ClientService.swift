@@ -13,10 +13,14 @@ class ClientService {
     private var connection: NWConnection?
     
     // se conecta em ip fixo utilizamos para testes
-    func connect(){
+    func connect(to host: String, port: UInt16){
+        guard let nwPort = NWEndpoint.Port(rawValue: port) else {
+            print("porta inválida")
+            return
+        }
         connection = NWConnection(
-            host: "127.0.0.1",
-            port: 8080,
+            host: NWEndpoint.Host(host),
+            port: nwPort,
             using: .tcp
         )
         

@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct Sala: Identifiable {
+struct Sala: Identifiable, Hashable {
     let id: String
 }
 
@@ -15,49 +15,53 @@ struct ContentView: View {
     let server = HostService()
 
     var body: some View {
-
-        Group {
-
-            if nickname.isEmpty {
-                telaCadastro
-            } else {
-                telaInicial
-                    .onAppear {
-                        if let url = URL(string: "https://example.com/sala?id=ABC123"
-                        ) {
-                            receberURL(url)
+        NavigationStack {
+            Group {
+                if nickname.isEmpty {
+                    telaCadastro
+                } else {
+                    telaInicial
+                }
+            }
+            .navigationDestination(item: $salaCriada) { sala in
+                SalaView(salaID: sala.id)
+            }
+            .sheet(isPresented: $mostrarEntradaSala) {
+                EntrarSalaView()
+            }
+            .onContinueUserActivity(
+                NSUserActivityTypeBrowsingWeb
+            ) { activity in
+                guard let url = activity.webpageURL else {
+                    return
+                }
+                receberURL(url)
+            }
+            .onOpenURL { url in
+                receberURL(url)
+            }
+            .alert(
+                "Convite recebido",
+                isPresented: Binding(
+                    get: { salaRecebidaID != nil },
+                    set: {
+                        if !$0 {
+                            salaRecebidaID = nil
                         }
                     }
+                )
+            ) {
+                Button("OK") {
+                    salaRecebidaID = nil
+                }
+            } message: {
+                Text(
+                    "Olá, \(nickname)! Convite para a sala \(salaRecebidaID ?? "")."
+                )
             }
-
-        }
-        .sheet(item: $salaCriada) { sala in
-            SalaView(salaID: sala.id)
-        }
-        .sheet(isPresented: $mostrarEntradaSala) {
-            EntrarSalaView()
-        }
-        .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) { activity in
-            guard let url = activity.webpageURL else { return }
-            receberURL(url)
-        }
-        .onOpenURL { url in
-            receberURL(url)
-        }
-        .alert(
-            "Convite recebido",
-            isPresented: Binding(
-                get: { salaRecebidaID != nil },
-                set: { if !$0 { salaRecebidaID = nil } }
-            )
-        ) {
-            Button("OK") {
-                salaRecebidaID = nil
-            }
-        } message: {
-            Text("Olá, \(nickname)! Convite para a sala \(salaRecebidaID ?? "").")
         }
     }
+
 
 
     private var telaCadastro: some View {

@@ -45,11 +45,29 @@
 			);
 			target = 7B104506309272CF000A003E /* AppClip */;
 		};
+		7BB846E3309BA4E0003ABAA6 /* Exceptions for "Networking" folder in "challenge6" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				ClientService.swift,
+				HostService.swift,
+			);
+			target = 000000000000000100000000 /* challenge6 */;
+		};
+		7BB846E5309BA57C003ABAA6 /* Exceptions for "challenge6" folder in "AppClip" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				EntrarSalaView.swift,
+			);
+			target = 7B104506309272CF000A003E /* AppClip */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		000000000000000000000010 /* challenge6 */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				7BB846E5309BA57C003ABAA6 /* Exceptions for "challenge6" folder in "AppClip" target */,
+			);
 			path = challenge6;
 			sourceTree = "<group>";
 		};
@@ -63,6 +81,9 @@
 		};
 		A0D237943093C1DA00487F4D /* Networking */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				7BB846E3309BA4E0003ABAA6 /* Exceptions for "Networking" folder in "challenge6" target */,
+			);
 			path = Networking;
 			sourceTree = "<group>";
 		};

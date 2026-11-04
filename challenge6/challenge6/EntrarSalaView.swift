@@ -13,6 +13,7 @@ struct EntrarSalaView: View {
 
     @State private var salaID = ""
     @State private var entrouNaSala = false
+    let clientService = ClientService()
 
     var body: some View {
         VStack(spacing: 24) {
@@ -31,6 +32,7 @@ struct EntrarSalaView: View {
                 .autocorrectionDisabled()
 
             Button("Entrar") {
+                clientService.connect()
                 entrouNaSala = true
             }
             .buttonStyle(.borderedProminent)

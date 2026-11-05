@@ -7,11 +7,14 @@
 
 import Foundation
 import Network
+import Combine
 
-class HostService {
+class HostService: ObservableObject {
+
     private var listener: NWListener?
     var connections: [NWConnection] = []
-    var players: [Player] = []
+    @Published var players: [Player] = []
+
     
     
     func initListener(){
@@ -47,20 +50,20 @@ class HostService {
             let player = Player(connection: connection)
 
             players.append(player)
-            print(player.nickname ?? "erro ao criar player")
+            //print(player.nickname ?? "erro ao criar player")
 
             connection.stateUpdateHandler = { state in
                 if case .ready = state {
                     player.receiveNickname { nickname in
                         print("Jogador conectado: \(nickname)")
-                    }
-                }
+                        self.objectWillChange.send()   
+                    }                }
                 if case .none = self.listener {
                     print("ndajsbhdjbhsa")
                 }
             }
             connection.start(queue: .main)
-            self.message(connection: connection)
+            //self.message(connection: connection)
         }
         
         listener?.start(queue: .main)

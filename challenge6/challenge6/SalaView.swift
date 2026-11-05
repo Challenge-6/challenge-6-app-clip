@@ -9,7 +9,8 @@ import SwiftUI
 
 struct SalaView: View {
     let salaID: String
-    @State private var hostService = HostService()
+    @ObservedObject var hostService: HostService  
+
 
     @State private var mostrarQRCode = false
 
@@ -51,11 +52,6 @@ struct SalaView: View {
                     Text("Roleta")
                         .font(.title)
                         .bold()
-
-                    ForEach(hostService.players) { player in
-                        Text(player.nickname ?? "Conectando...")
-                    }
-
                 }
             }
 
@@ -73,8 +69,16 @@ struct SalaView: View {
     }
 }
 
+struct PlayerRow: View {
+    @ObservedObject var player: Player
+
+    var body: some View {
+        Text(player.nickname ?? "...")
+    }
+}
+
 #Preview {
     NavigationStack {
-        SalaView(salaID: "ABC123")
+        SalaView(salaID: "ABC123", hostService: HostService())
     }
 }

@@ -7,12 +7,13 @@
 
 import Foundation
 import Network
+import Combine
 
-final class Player: Identifiable {
+final class Player: ObservableObject, Identifiable {
 
     let id = UUID()
     let connection: NWConnection
-    var nickname: String?
+    @Published var nickname: String?
 
     init(connection: NWConnection) {
         self.connection = connection

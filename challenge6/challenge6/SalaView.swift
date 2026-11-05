@@ -5,9 +5,11 @@
 //  Created by Gabriel Groppo on 29/10/26.
 //
 
+
 import SwiftUI
 
 struct SalaView: View {
+
     let salaID: String
 
     @State private var mostrarQRCode = false
@@ -18,12 +20,18 @@ struct SalaView: View {
         "Sarah"
     ]
 
+    // Resultado do sorteio
+    @State private var vencedor: String?
+    @State private var sorteioID: UUID?
+
     var body: some View {
+
         VStack(spacing: 24) {
+
             Text("Sala \(salaID)")
                 .font(.title2)
                 .bold()
-            
+
             Button {
                 mostrarQRCode = true
             } label: {
@@ -35,33 +43,32 @@ struct SalaView: View {
                 .padding(5)
             }
             .buttonStyle(.borderedProminent)
-           
-            ZStack {
-                Circle()
-                    .fill(.blue.opacity(0.15))
-                    .frame(width: 280, height: 280)
 
-                VStack(spacing: 12) {
-                    Image(systemName: "circle.dotted.circle")
-                        .font(.system(size: 65))
-                        .foregroundStyle(.blue)
+            // Roleta dinâmica
+            RoletaView(
+                participantes: participantes,
+                vencedor: vencedor,
+                sorteioID: sorteioID
+            )
+            .frame(width: 300, height: 300)
 
-                    Text("Roleta")
-                        .font(.title)
-                        .bold()
+            Text("\(participantes.count) participantes")
+                .foregroundStyle(.secondary)
 
-                    Text("\(participantes.count) participantes")
-                        .foregroundStyle(.secondary)
-                }
+            // Botão temporário para testar a animação
+            Button {
+                vencedor = "Lucas"
+                sorteioID = UUID()
+            } label: {
+                Label(
+                    "Simular sorteio",
+                    systemImage: "play.fill"
+                )
+                .frame(maxWidth: 240)
             }
-
-            Text(participantes.joined(separator: " • "))
-                .multilineTextAlignment(.center)
+            .buttonStyle(.borderedProminent)
 
             Spacer()
-
-            
-
         }
         .padding()
         .navigationTitle("Sorteio")

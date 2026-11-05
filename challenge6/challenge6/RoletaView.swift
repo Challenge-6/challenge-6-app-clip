@@ -1,28 +1,21 @@
 //
-//  RoletaView.swift
+//  SalaView.swift
 //  challenge6
 //
 //  Created by Gabriel Groppo on 04/11/26.
 //
 
-
 import SwiftUI
 
-// Representa uma fatia da roleta
 struct FatiaRoleta: Shape {
     let inicio: Angle
     let fim: Angle
 
     func path(in rect: CGRect) -> Path {
-        let centro = CGPoint(
-            x: rect.midX,
-            y: rect.midY
-        )
-
+        let centro = CGPoint(x: rect.midX, y: rect.midY)
         let raio = min(rect.width, rect.height) / 2
 
         var path = Path()
-
         path.move(to: centro)
 
         path.addArc(
@@ -34,7 +27,6 @@ struct FatiaRoleta: Shape {
         )
 
         path.closeSubpath()
-
         return path
     }
 }
@@ -42,16 +34,14 @@ struct FatiaRoleta: Shape {
 struct RoletaView: View {
 
     let participantes: [String]
+    let vencedor: String?
+    let sorteioID: UUID?
+
+    @State private var rotacao: Double = 0
 
     private let cores: [Color] = [
-        .blue,
-        .orange,
-        .purple,
-        .green,
-        .pink,
-        .cyan,
-        .indigo,
-        .mint
+        .blue, .orange, .purple, .green,
+        .pink, .cyan, .indigo, .mint
     ]
 
     var body: some View {
@@ -65,58 +55,72 @@ struct RoletaView: View {
             let quantidade = participantes.count
 
             ZStack {
-                if quantidade == 0 {
-                    Circle()
-                        .fill(.gray.opacity(0.2))
 
-                    Text("Aguardando participantes")
-                        .foregroundStyle(.secondary)
+                // Disco da roleta
+                ZStack {
+                    if quantidade == 0 {
+                        Circle()
+                            .fill(.gray.opacity(0.2))
 
-                } else {
-                    ForEach(participantes.indices, id: \.self) { indice in
+                        Text("Aguardando participantes")
+                            .foregroundStyle(.secondary)
 
-                        let angulo = 360.0 / Double(quantidade)
+                    } else {
+                        ForEach(participantes.indices, id: \.self) { indice in
 
-                        let inicio = Double(indice) * angulo - 90
-                        let fim = inicio + angulo
-                        let meio = (inicio + fim) / 2
+                            let angulo = 360.0 / Double(quantidade)
+                            let inicio = Double(indice) * angulo - 90
+                            let fim = inicio + angulo
+                            let meio = (inicio + fim) / 2
 
-                        FatiaRoleta(
-                            inicio: .degrees(inicio),
-                            fim: .degrees(fim)
-                        )
-                        .fill(cores[indice % cores.count])
-                        .overlay {
                             FatiaRoleta(
                                 inicio: .degrees(inicio),
                                 fim: .degrees(fim)
                             )
-                            .stroke(.white, lineWidth: 2)
+                            .fill(cores[indice % cores.count])
+                            .overlay {
+                                FatiaRoleta(
+                                    inicio: .degrees(inicio),
+                                    fim: .degrees(fim)
+                                )
+                                .stroke(.white, lineWidth: 2)
+                            }
+
+                            Text(participantes[indice])
+                                .font(.system(
+                                    size: quantidade > 8 ? 10 : 14,
+                                    weight: .semibold
+                                ))
+                                .foregroundStyle(.white)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.5)
+                                .frame(width: tamanho * 0.30)
+                                .rotationEffect(.degrees(meio + 90))
+                                .position(
+                                    x: tamanho / 2 +
+                                        cos(meio * .pi / 180) * tamanho * 0.30,
+                                    y: tamanho / 2 +
+                                        sin(meio * .pi / 180) * tamanho * 0.30
+                                )
                         }
-
-                        // Nome dentro da fatia
-                        Text(participantes[indice])
-                            .font(.system(
-                                size: quantidade > 8 ? 10 : 14,
-                                weight: .semibold
-                            ))
-                            .foregroundStyle(.white)
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.5)
-                            .frame(width: tamanho * 0.30)
-                            .position(
-                                x: tamanho / 2 +
-                                    cos(meio * .pi / 180) * tamanho * 0.30,
-                                y: tamanho / 2 +
-                                    sin(meio * .pi / 180) * tamanho * 0.30
-                            )
                     }
-                }
 
-                Circle()
-                    .fill(.white)
-                    .frame(width: 24, height: 24)
+                    Circle()
+                        .fill(.white)
+                        .frame(width: 24, height: 24)
+                        .shadow(radius: 2)
+                }
+                .rotationEffect(.degrees(rotacao))
+
+                // Seta fixa no topo
+                Image(systemName: "arrowtriangle.down.fill")
+                    .font(.system(size: 32))
+                    .foregroundStyle(.red)
                     .shadow(radius: 2)
+                    .position(
+                        x: tamanho / 2,
+                        y: 4
+                    )
             }
             .frame(width: tamanho, height: tamanho)
             .position(
@@ -125,10 +129,47 @@ struct RoletaView: View {
             )
         }
         .aspectRatio(1, contentMode: .fit)
+        .onChange(of: sorteioID) { _, novoID in
+            guard novoID != nil else { return }
+            girarRoleta()
+        }
+    }
+
+    private func girarRoleta() {
+        guard let vencedor,
+              let indice = participantes.firstIndex(of: vencedor),
+              !participantes.isEmpty else {
+            return
+        }
+
+        let anguloFatia = 360.0 / Double(participantes.count)
+
+        // Centro da fatia do vencedor
+        let centroFatia = (Double(indice) + 0.5) * anguloFatia
+
+        // Rotação necessária para alinhar com a seta
+        let ajuste = (360.0 - centroFatia)
+            .truncatingRemainder(dividingBy: 360)
+
+        // Posição atual da roleta
+        let posicaoAtual = rotacao
+            .truncatingRemainder(dividingBy: 360)
+
+        // Distância positiva até o vencedor
+        let distancia = (ajuste - posicaoAtual + 360)
+            .truncatingRemainder(dividingBy: 360)
+
+        // Três voltas completas + alinhamento final
+        let rotacaoFinal = rotacao + 1080 + distancia
+
+        withAnimation(.easeOut(duration: 5)) {
+            rotacao = rotacaoFinal
+        }
     }
 }
 
-// Preview interativo
+// MARK: - Preview
+
 #Preview {
     RoletaPreview()
 }
@@ -136,50 +177,35 @@ struct RoletaView: View {
 private struct RoletaPreview: View {
 
     @State private var participantes = [
-        "Gabriel",
-        "Lucas",
-        "Sarah"
+        "Gabriel", "Lucas", "Sarah"
     ]
 
-    private let nomes = [
-        "Ana", "Pedro", "Julia",
-        "Rafael", "Beatriz", "Carlos"
-    ]
+    @State private var vencedor: String?
+    @State private var sorteioID: UUID?
 
     var body: some View {
         VStack(spacing: 30) {
 
-            Text("Roleta dinâmica")
+            Text("Roleta")
                 .font(.largeTitle)
                 .bold()
 
-            RoletaView(participantes: participantes)
-                .frame(width: 320, height: 320)
+            RoletaView(
+                participantes: participantes,
+                vencedor: vencedor,
+                sorteioID: sorteioID
+            )
+            .frame(width: 320, height: 320)
 
             Text("\(participantes.count) participantes")
                 .foregroundStyle(.secondary)
 
-            HStack {
-                Button("Remover") {
-                    if !participantes.isEmpty {
-                        participantes.removeLast()
-                    }
-                }
-                .disabled(participantes.isEmpty)
-
-                Spacer()
-
-                Button("Adicionar") {
-                    let indice = participantes.count - 3
-
-                    if indice >= 0 && indice < nomes.count {
-                        participantes.append(nomes[indice])
-                    }
-                }
-                .disabled(participantes.count >= 9)
+            Button("Simular sorteio") {
+                // Simula o vencedor enviado pelo backend
+                vencedor = "Gabriel"
+                sorteioID = UUID()
             }
             .buttonStyle(.borderedProminent)
-            .padding(.horizontal)
 
             Spacer()
         }

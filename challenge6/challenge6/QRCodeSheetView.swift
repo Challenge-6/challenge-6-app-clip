@@ -52,6 +52,7 @@ struct QRCodeSheetView: View {
             Text("Escaneie o QR Code para entrar na sala.")
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.secondary)
+                
 
             ShareLink(item: urlSala) {
                 Label(

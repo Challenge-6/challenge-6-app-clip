@@ -45,7 +45,8 @@ struct EntrarSalaView: View {
                         entrouNaSala = true
                     }
                 }
-            }            .buttonStyle(.borderedProminent)
+            }
+            .buttonStyle(.borderedProminent)
             .disabled(
                 salaID.trimmingCharacters(
                     in: .whitespacesAndNewlines

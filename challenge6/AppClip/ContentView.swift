@@ -51,7 +51,7 @@ struct ContentView: View {
                         .resizable()
                         .scaledToFit()
                         .frame(width: 290)
-                        .padding(.bottom, 34)
+                        .padding(.bottom, 30)
                     TextField("", text: $nickname, prompt: Text("Digite o seu apelido").foregroundStyle(.white.opacity(0.75)))
                         .font(.system(size: 14).width(.expanded))
                         .foregroundStyle(.white)

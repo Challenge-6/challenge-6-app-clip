@@ -12,7 +12,7 @@ struct ContentView: View {
     @State private var mostrarEntradaSala = false
     @State private var salaCriada: Sala?
     @State private var nomeDigitado = ""
-    let server = HostService()
+    @StateObject private var server = HostService()
 
     var body: some View {
         NavigationStack {
@@ -24,7 +24,7 @@ struct ContentView: View {
                 }
             }
             .navigationDestination(item: $salaCriada) { sala in
-                SalaView(salaID: sala.id)
+                SalaView(salaID: sala.id, hostService: server)   
             }
             .sheet(isPresented: $mostrarEntradaSala) {
                 EntrarSalaView()

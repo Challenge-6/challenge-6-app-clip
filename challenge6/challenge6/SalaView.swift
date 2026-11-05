@@ -11,6 +11,8 @@ import SwiftUI
 struct SalaView: View {
 
     let salaID: String
+    @ObservedObject var hostService: HostService  
+
 
     @State private var mostrarQRCode = false
     @State private var sorteando = false
@@ -125,8 +127,16 @@ struct SalaView: View {
     }
 }
 
+struct PlayerRow: View {
+    @ObservedObject var player: Player
+
+    var body: some View {
+        Text(player.nickname ?? "...")
+    }
+}
+
 #Preview {
     NavigationStack {
-        SalaView(salaID: "ABC123")
+        SalaView(salaID: "ABC123", hostService: HostService())
     }
 }

@@ -5,14 +5,12 @@
 //  Created by Gabriel Groppo on 29/10/26.
 //
 
-
 import SwiftUI
 
 struct SalaView: View {
 
     let salaID: String
-    @ObservedObject var hostService: HostService  
-
+    @ObservedObject var hostService: HostService
 
     @State private var mostrarQRCode = false
     @State private var sorteando = false
@@ -22,12 +20,11 @@ struct SalaView: View {
         "Lucas",
         "Sarah"
     ]
-    
 
     // Resultado do sorteio
     @State private var vencedor: String?
     @State private var sorteioID: UUID?
-    
+
     var body: some View {
 
         VStack(spacing: 24) {
@@ -58,7 +55,7 @@ struct SalaView: View {
 
             Text("\(participantes.count) participantes")
                 .foregroundStyle(.secondary)
-            
+
             if mostrarVencedor, let vencedor {
                 VStack(spacing: 8) {
 
@@ -95,6 +92,7 @@ struct SalaView: View {
                 vencedor = sorteado
                 sorteioID = UUID()
                 sorteando = true
+
                 // Aguarda os 5 segundos da animação da roleta
                 Task {
                     try? await Task.sleep(for: .seconds(5))
@@ -103,7 +101,6 @@ struct SalaView: View {
                         mostrarVencedor = true
                         sorteando = false
                     }
-                    
                 }
 
             } label: {

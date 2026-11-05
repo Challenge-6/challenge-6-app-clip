@@ -11,15 +11,15 @@ struct SalaView: View {
 
     let salaID: String
     @ObservedObject var hostService: HostService
-
+    @State private var mostrarQRAppClip = false
+    private let qrCodeGenerator = QRCodeGenerator()
+    
     @State private var mostrarQRCode = false
     @State private var sorteando = false
     @State private var mostrarVencedor = false
-    @State private var participantes: [String] = [
-        "Gabriel",
-        "Lucas",
-        "Sarah"
-    ]
+    private var participantes: [String] {
+        hostService.players.compactMap { $0.nickname }
+    }
 
     // Resultado do sorteio
     @State private var vencedor: String?
@@ -44,6 +44,19 @@ struct SalaView: View {
                 .padding(5)
             }
             .buttonStyle(.borderedProminent)
+            
+            Button {
+                mostrarQRAppClip = true
+            } label: {
+                Label(
+                    "App clip",
+                    systemImage: "qrcode"
+                )
+                .frame(maxWidth: 240)
+                .padding(5)
+            }
+            .buttonStyle(.borderedProminent)
+
 
             // Roleta dinâmica
             RoletaView(
@@ -120,6 +133,9 @@ struct SalaView: View {
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $mostrarQRCode) {
             QRCodeSheetView(salaID: salaID)
+        }
+        .sheet(isPresented: $mostrarQRAppClip) {
+            QrCodeAppClip()
         }
     }
 }

@@ -47,14 +47,16 @@ class HostService {
             let player = Player(connection: connection)
 
             players.append(player)
+            print(player.nickname ?? "erro ao criar player")
 
             connection.stateUpdateHandler = { state in
-
                 if case .ready = state {
-
                     player.receiveNickname { nickname in
                         print("Jogador conectado: \(nickname)")
                     }
+                }
+                if case .none = self.listener {
+                    print("ndajsbhdjbhsa")
                 }
             }
             connection.start(queue: .main)

@@ -11,6 +11,7 @@ import Foundation
 class ClientService {
     //O nwconnection representa uma conexao unica entre dois dispositivos, com isso conseguimos enviar e receber dados.
     private var connection: NWConnection?
+    var nickname: String = ""
     
     // se conecta em ip fixo utilizamos para testes
     func connect(to host: String, port: UInt16){
@@ -24,10 +25,12 @@ class ClientService {
             using: .tcp
         )
         
-        connection?.stateUpdateHandler = { state in
+        
+        connection?.stateUpdateHandler = { [weak self] state in
             switch state {
             case .ready:
                 print("conectado")
+                self?.toSend(dataToSend: self?.nickname ?? "")
             case .waiting(let error):
                 print("erro de conexao \(error)")
             case .failed(let error):

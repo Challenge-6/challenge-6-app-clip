@@ -40,6 +40,7 @@ struct EntrarSalaView: View {
                 QRScannerView { text in
                     mostrandoScanner = false
                     if let (host, port) = parseHost(text) {
+                        clientService.nickname = nickname   
                         clientService.connect(to: host, port: port)
                         entrouNaSala = true
                     }

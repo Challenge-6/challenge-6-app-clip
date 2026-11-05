@@ -52,8 +52,6 @@ struct SalaView: View {
                         .font(.title)
                         .bold()
 
-                    Text("\(participantes.count) participantes")
-                        .foregroundStyle(.secondary)
                     ForEach(hostService.players) { player in
                         Text(player.nickname ?? "Conectando...")
                     }

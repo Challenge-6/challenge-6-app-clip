@@ -202,7 +202,7 @@ private struct RoletaPreview: View {
 
             Button("Simular sorteio") {
                 // Simula o vencedor enviado pelo backend
-                vencedor = "Gabriel"
+                vencedor = "Sarah"
                 sorteioID = UUID()
             }
             .buttonStyle(.borderedProminent)

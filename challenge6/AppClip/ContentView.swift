@@ -11,6 +11,8 @@ struct ContentView: View {
 
     @State private var salaID: String = ""
     @State private var nickname: String = ""
+    @State private var mostrandoScanner = false
+    @State private var clientService = ClientService()
 
     var body: some View {
         GeometryReader { geometry in
@@ -72,6 +74,7 @@ struct ContentView: View {
                 Spacer()
 
                 Button {
+                    mostrandoScanner = true
                     
                 } label: {
                     Text("Entrar na sala")
@@ -108,6 +111,16 @@ struct ContentView: View {
                 endRadius: 450
             )
             .ignoresSafeArea()
+        }
+        .sheet(isPresented: $mostrandoScanner) {
+            QRScannerView { text in
+                mostrandoScanner = false
+                if let (host, port) = parseHost(text) {
+                    clientService.nickname = nickname
+                    clientService.connect(to: host, port: port)
+                    //entrouNaSala = true
+                }
+            }
         }
 
         // Mantém o recebimento do QR Code

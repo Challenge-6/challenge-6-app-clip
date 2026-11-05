@@ -13,17 +13,19 @@ struct SalaView: View {
     let salaID: String
 
     @State private var mostrarQRCode = false
-
+    @State private var sorteando = false
+    @State private var mostrarVencedor = false
     @State private var participantes: [String] = [
         "Gabriel",
         "Lucas",
         "Sarah"
     ]
+    
 
     // Resultado do sorteio
     @State private var vencedor: String?
     @State private var sorteioID: UUID?
-
+    
     var body: some View {
 
         VStack(spacing: 24) {
@@ -54,19 +56,63 @@ struct SalaView: View {
 
             Text("\(participantes.count) participantes")
                 .foregroundStyle(.secondary)
+            
+            if mostrarVencedor, let vencedor {
+                VStack(spacing: 8) {
 
-            // Botão temporário para testar a animação
+                    Image(systemName: "trophy.fill")
+                        .font(.system(size: 36))
+                        .foregroundStyle(.yellow)
+
+                    Text("Participante sorteado!")
+                        .font(.headline)
+                        .foregroundStyle(.secondary)
+
+                    Text(vencedor)
+                        .font(.largeTitle)
+                        .bold()
+                        .foregroundStyle(.primary)
+                }
+                .frame(maxWidth: .infinity)
+                .transition(
+                    .opacity.combined(
+                        with: .move(edge: .bottom)
+                    )
+                )
+            }
+
             Button {
-                vencedor = "Lucas"
+                guard let sorteado = participantes.randomElement() else {
+                    return
+                }
+
+                // Esconde o resultado anterior
+                mostrarVencedor = false
+
+                // Define o vencedor e inicia a roleta
+                vencedor = sorteado
                 sorteioID = UUID()
+                sorteando = true
+                // Aguarda os 5 segundos da animação da roleta
+                Task {
+                    try? await Task.sleep(for: .seconds(5))
+
+                    withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
+                        mostrarVencedor = true
+                        sorteando = false
+                    }
+                    
+                }
+
             } label: {
                 Label(
-                    "Simular sorteio",
+                    "Sortear participante",
                     systemImage: "play.fill"
                 )
                 .frame(maxWidth: 240)
             }
             .buttonStyle(.borderedProminent)
+            .disabled(participantes.isEmpty || sorteando)
 
             Spacer()
         }

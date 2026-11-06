@@ -61,8 +61,17 @@
 				QrCodeAppClip.swift,
 				QRCodeGenerator.swift,
 				QrCodeScanner.swift,
+				RoletaView.swift,
 			);
 			target = 7B104506309272CF000A003E /* AppClip */;
+		};
+		7BB84A94309E3350003ABAA6 /* Exceptions for "AppClip" folder in "challenge6" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Assets.xcassets,
+				SalaEsperaView.swift,
+			);
+			target = 000000000000000100000000 /* challenge6 */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -78,6 +87,7 @@
 		7B104508309272CF000A003E /* AppClip */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
+				7BB84A94309E3350003ABAA6 /* Exceptions for "AppClip" folder in "challenge6" target */,
 				7B104514309272D0000A003E /* Exceptions for "AppClip" folder in "AppClip" target */,
 			);
 			path = AppClip;

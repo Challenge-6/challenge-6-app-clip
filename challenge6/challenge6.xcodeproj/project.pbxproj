@@ -61,7 +61,10 @@
 				QrCodeAppClip.swift,
 				QRCodeGenerator.swift,
 				QrCodeScanner.swift,
+				QRCodeSheetView.swift,
 				RoletaView.swift,
+				SalaCriadaView.swift,
+				SalaView.swift,
 			);
 			target = 7B104506309272CF000A003E /* AppClip */;
 		};

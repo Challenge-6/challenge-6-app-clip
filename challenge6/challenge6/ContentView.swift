@@ -9,12 +9,14 @@ struct ContentView: View {
     @AppStorage("nickname") private var nickname = ""
 
     @State private var salaRecebidaID: String?
-    @State private var mostrarEntradaSala = false
+    //@State private var mostrarEntradaSala = false
     @State private var salaCriada: Sala?
     @State private var nomeDigitado = ""
     @StateObject private var server = HostService()
     @FocusState private var nomeEmFoco: Bool
-
+    @State private var mostrandoScanner = false
+    @State private var entrouNaSala = false
+    @State private var clientService = ClientService()
 
     var body: some View {
         NavigationStack {
@@ -28,8 +30,15 @@ struct ContentView: View {
             .navigationDestination(item: $salaCriada) { sala in
                 SalaView(salaID: sala.id, hostService: server)   
             }
-            .sheet(isPresented: $mostrarEntradaSala) {
-                EntrarSalaView()
+            .sheet(isPresented: $mostrandoScanner) {
+                QRScannerView { text in
+                    mostrandoScanner = false
+                    if let (host, port) = parseHost(text) {
+                        clientService.nickname = nickname
+                        clientService.connect(to: host, port: port)
+                        entrouNaSala = true
+                    }
+                }
             }
             .onContinueUserActivity(
                 NSUserActivityTypeBrowsingWeb
@@ -64,45 +73,6 @@ struct ContentView: View {
         }
     }
 
-
-
-//    private var telaCadastro: some View {
-//
-//        VStack(spacing: 24) {
-//
-//            Image(systemName: "person.crop.circle")
-//                .font(.system(size: 60))
-//                .foregroundStyle(.blue)
-//
-//            Text("Bem-vindo!")
-//                .font(.largeTitle)
-//                .bold()
-//
-//            Text("Escolha um nome para participar das salas.")
-//                .multilineTextAlignment(.center)
-//                .foregroundStyle(.secondary)
-//
-//            TextField("Digite seu nome", text: $nomeDigitado)
-//                .textFieldStyle(.roundedBorder)
-//                .autocorrectionDisabled()
-//
-//            Button("Continuar") {
-//
-//                nickname = nomeDigitado
-//                    .trimmingCharacters(in: .whitespacesAndNewlines)
-//
-//            }
-//            .buttonStyle(.borderedProminent)
-//            .disabled(
-//                nomeDigitado.trimmingCharacters(
-//                    in: .whitespacesAndNewlines
-//                ).isEmpty
-//            )
-//
-//        }
-//        .padding()
-//    }
-    
     private var telaCadastro: some View {
         GeometryReader { geometry in
             let altura = geometry.size.height
@@ -219,58 +189,7 @@ struct ContentView: View {
         }
     }
     
-//    private var telaInicial: some View {
-//
-//        VStack(spacing: 24) {
-//
-//            Image(systemName: "person.3.fill")
-//                .font(.system(size: 60))
-//                .foregroundStyle(.blue)
-//
-//            Text("Olá, \(nickname)!")
-//                .font(.largeTitle)
-//                .bold()
-//
-//            Text("O que deseja fazer?")
-//                .foregroundStyle(.secondary)
-//
-//            Button {
-//                let novoID = String(UUID().uuidString.prefix(6))
-//
-//                print("ID gerado:", novoID)
-//                server.initListener()
-//
-//                salaCriada = Sala(id: novoID)
-//
-//            } label: {
-//                Label("Criar sala", systemImage: "plus.circle")
-//                    .frame(maxWidth: .infinity)
-//                    .padding()
-//                
-//            }
-//            .buttonStyle(.borderedProminent)
-//            
-//            Button {
-//                mostrarEntradaSala = true
-//            } label: {
-//                Label("Entrar na sala", systemImage: "arrow.right.circle")
-//                    .frame(maxWidth: .infinity)
-//                    .padding()
-//            }
-//            .buttonStyle(.bordered)
-//
-//            Button("Alterar nome") {
-//                nickname = ""
-//                nomeDigitado = ""
-//            }
-//            .font(.footnote)
-//
-//        }
-//        .padding()
-//    }
-    
-    
-    private let roxoBotao = Color(red: 0.08, green: 0.03, blue: 0.25)
+
 
     private var telaInicial: some View {
         VStack(spacing: 0) {
@@ -314,7 +233,7 @@ struct ContentView: View {
                 Label("Criar Sala", systemImage: "plus.circle")
                     .font(.system(size: 20, weight: .bold))
                     .fontWidth(.expanded)
-                    .foregroundStyle(roxoBotao)
+                    .foregroundStyle(Color("RoxoEscuro"))
                     .frame(maxWidth: .infinity)
                     .frame(height: 50)
                     .background(Color("Amarelo"), in: Capsule())
@@ -322,7 +241,7 @@ struct ContentView: View {
             .padding(.top, 28)
 
             Button {
-                mostrarEntradaSala = true
+                mostrandoScanner = true
             } label: {
                 Label("Entrar na sala", systemImage: "arrow.right.circle")
                     .font(.system(size: 20, weight: .bold))
@@ -330,7 +249,7 @@ struct ContentView: View {
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
                     .frame(height: 50)
-                    .background(roxoBotao, in: Capsule())
+                    .background(Color("RoxoEscuro"), in: Capsule())
             }
             .padding(.top, 18)
         }

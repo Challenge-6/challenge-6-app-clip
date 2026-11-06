@@ -13,6 +13,8 @@ struct ContentView: View {
     @State private var salaCriada: Sala?
     @State private var nomeDigitado = ""
     @StateObject private var server = HostService()
+    @FocusState private var nomeEmFoco: Bool
+
 
     var body: some View {
         NavigationStack {
@@ -64,43 +66,158 @@ struct ContentView: View {
 
 
 
+//    private var telaCadastro: some View {
+//
+//        VStack(spacing: 24) {
+//
+//            Image(systemName: "person.crop.circle")
+//                .font(.system(size: 60))
+//                .foregroundStyle(.blue)
+//
+//            Text("Bem-vindo!")
+//                .font(.largeTitle)
+//                .bold()
+//
+//            Text("Escolha um nome para participar das salas.")
+//                .multilineTextAlignment(.center)
+//                .foregroundStyle(.secondary)
+//
+//            TextField("Digite seu nome", text: $nomeDigitado)
+//                .textFieldStyle(.roundedBorder)
+//                .autocorrectionDisabled()
+//
+//            Button("Continuar") {
+//
+//                nickname = nomeDigitado
+//                    .trimmingCharacters(in: .whitespacesAndNewlines)
+//
+//            }
+//            .buttonStyle(.borderedProminent)
+//            .disabled(
+//                nomeDigitado.trimmingCharacters(
+//                    in: .whitespacesAndNewlines
+//                ).isEmpty
+//            )
+//
+//        }
+//        .padding()
+//    }
+    
     private var telaCadastro: some View {
+        GeometryReader { geometry in
+            let altura = geometry.size.height
 
-        VStack(spacing: 24) {
+            VStack(spacing: 0) {
+                Spacer()
+                    .frame(height: 60)
 
-            Image(systemName: "person.crop.circle")
-                .font(.system(size: 60))
-                .foregroundStyle(.blue)
+                Text("Bem Vindo(a)!")
+                    .font(.system(size: 32, weight: .bold).width(.expanded))
+                    .foregroundStyle(Color("Amarelo"))
 
-            Text("Bem-vindo!")
-                .font(.largeTitle)
-                .bold()
+                Spacer()
+                    .frame(height: nomeEmFoco ? 25 : 40)
 
-            Text("Escolha um nome para participar das salas.")
-                .multilineTextAlignment(.center)
-                .foregroundStyle(.secondary)
+                if !nomeEmFoco {
 
-            TextField("Digite seu nome", text: $nomeDigitado)
-                .textFieldStyle(.roundedBorder)
-                .autocorrectionDisabled()
+                    // Ocupa o lugar do "Sala: ..." do App Clip (texto 20pt + 36)
+                    Spacer()
+                        .frame(height: 60)
 
-            Button("Continuar") {
+                    Text("Escolha um nome para\nparticipar das salas.")
+                        .font(.system(size: 21).width(.expanded))
+                        .multilineTextAlignment(.center)
+                        .foregroundStyle(.white)
 
-                nickname = nomeDigitado
-                    .trimmingCharacters(in: .whitespacesAndNewlines)
+                    Spacer()
+                        .frame(height: 40)
+                }
 
+                ZStack(alignment: .bottom) {
+
+                    Image("logoPavao")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 290)
+                        .padding(.bottom, 70)
+
+                    TextField(
+                        "",
+                        text: $nomeDigitado,
+                        prompt: Text("Digite o seu apelido")
+                            .foregroundStyle(.white.opacity(0.75))
+                    )
+                    .font(.system(size: 14).width(.expanded))
+                    .foregroundStyle(.white)
+                    .multilineTextAlignment(.center)
+                    .autocorrectionDisabled()
+                    .textInputAutocapitalization(.words)
+                    .focused($nomeEmFoco)
+                    .submitLabel(.done)
+                    .onSubmit {
+                        nomeEmFoco = false
+                    }
+                    .padding(.horizontal, 16)
+                    .frame(height: 45)
+                    .background(
+                        Color("RoxoEscuro"),
+                        in: RoundedRectangle(cornerRadius: 20)
+                    )
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 20)
+                            .stroke(.white, lineWidth: 1)
+                    }
+                    .padding(.horizontal, 40)
+                    .padding(.bottom, 40)
+                    .offset(y: 10)
+                }
+                Spacer()
+                if !nomeEmFoco {
+                    Button {
+                        nomeEmFoco = false
+                        nickname = nomeDigitado
+                            .trimmingCharacters(in: .whitespacesAndNewlines)
+                    } label: {
+                        Text("Continuar")
+                            .font(.system(size: 19, weight: .bold).width(.expanded))
+                            .foregroundStyle(Color("RoxoEscuro"))
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 46)
+                            .background(
+                                Color("Amarelo"),
+                                in: Capsule()
+                            )
+                    }
+                    .disabled(
+                        nomeDigitado.trimmingCharacters(
+                            in: .whitespacesAndNewlines
+                        ).isEmpty
+                    )
+                    .opacity(
+                        nomeDigitado.trimmingCharacters(
+                            in: .whitespacesAndNewlines
+                        ).isEmpty ? 0.5 : 1
+                    )
+                    .padding(.horizontal, 70)
+                }
+
+                Spacer()
+                    .frame(height: nomeEmFoco ? 12 : altura * 0.10)
             }
-            .buttonStyle(.borderedProminent)
-            .disabled(
-                nomeDigitado.trimmingCharacters(
-                    in: .whitespacesAndNewlines
-                ).isEmpty
-            )
-
+            .frame(maxWidth: .infinity)
+            .frame(height: altura)
+            .contentShape(Rectangle())
+            .onTapGesture {
+                nomeEmFoco = false
+            }
         }
-        .padding()
+        .background {
+            Image("fundo")
+                .resizable()
+                .scaledToFill()
+                .ignoresSafeArea()
+        }
     }
-
     private var telaInicial: some View {
 
         VStack(spacing: 24) {

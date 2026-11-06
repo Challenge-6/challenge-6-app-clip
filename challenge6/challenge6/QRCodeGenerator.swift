@@ -5,26 +5,49 @@
 //  Created by Gabriel Groppo on 29/10/26.
 //
 
+
 import SwiftUI
+import CoreImage
 import CoreImage.CIFilterBuiltins
 
 struct QRCodeGenerator {
 
     private let context = CIContext()
-    private let filter = CIFilter.qrCodeGenerator()
 
-    func gerarQRCode(texto: String) -> UIImage? {
+    func gerarQRCode(
+        texto: String,
+        branco: Bool = false
+    ) -> UIImage? {
 
-        let data = Data(texto.utf8)
+        let gerador = CIFilter.qrCodeGenerator()
+        gerador.message = Data(texto.utf8)
+        gerador.correctionLevel = "H"
 
-        filter.message = data
-        filter.correctionLevel = "M"
-
-        guard let outputImage = filter.outputImage else {
+        guard let qrOriginal = gerador.outputImage else {
             return nil
         }
 
-        let imagemAmpliada = outputImage.transformed(
+        let imagemFinal: CIImage
+
+        if branco {
+            let filtro = CIFilter.falseColor()
+            filtro.inputImage = qrOriginal
+
+            filtro.color0 = CIColor(color: .white)
+
+            filtro.color1 = CIColor(
+                red: 0,
+                green: 0,
+                blue: 0,
+                alpha: 0
+            )
+
+            imagemFinal = filtro.outputImage ?? qrOriginal
+        } else {
+            imagemFinal = qrOriginal
+        }
+
+        let imagemAmpliada = imagemFinal.transformed(
             by: CGAffineTransform(scaleX: 10, y: 10)
         )
 

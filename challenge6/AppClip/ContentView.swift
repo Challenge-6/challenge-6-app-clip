@@ -37,14 +37,14 @@ struct ContentView: View {
                 if !nicknameEmFoco {
 
                     Text("Sala: \(salaID.isEmpty ? "Não identificada" : salaID)")
-                        .font(.system(size: 20).width(.expanded))
+                        .font(.system(size: 17).width(.expanded))
                         .foregroundStyle(.white)
 
                     Spacer()
                         .frame(height: 36)
 
                     Text("Escolha um nome para\nparticipar da sala.")
-                        .font(.system(size: 21).width(.expanded))
+                        .font(.system(size: 20).width(.expanded))
                         .multilineTextAlignment(.center)
                         .foregroundStyle(.white)
 
@@ -66,7 +66,7 @@ struct ContentView: View {
                         prompt: Text("Digite o seu apelido")
                             .foregroundStyle(.white.opacity(0.75))
                     )
-                    .font(.system(size: 14).width(.expanded))
+                    .font(.system(size: 13).width(.expanded))
                     .foregroundStyle(.white)
                     .multilineTextAlignment(.center)
                     .autocorrectionDisabled()
@@ -97,10 +97,10 @@ struct ContentView: View {
                         mostrandoScanner = true
                     } label: {
                         Text("Entrar na sala")
-                            .font(.system(size: 19, weight: .bold).width(.expanded))
+                            .font(.system(size: 17, weight: .bold).width(.expanded))
                             .foregroundStyle(Color("RoxoEscuro"))
                             .frame(maxWidth: .infinity)
-                            .frame(height: 46)
+                            .frame(height: 44)
                             .background(
                                 Color("Amarelo"),
                                 in: Capsule()

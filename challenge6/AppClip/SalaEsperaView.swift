@@ -36,7 +36,7 @@ struct SalaEsperaView: View {
                     .frame(height: 50)
 
                 Text("Sala: \(salaID)")
-                    .font(.system(size: 20).width(.expanded))
+                    .font(.system(size: 17).width(.expanded))
                     .foregroundStyle(.white)
 
                 Spacer()
@@ -55,7 +55,7 @@ struct SalaEsperaView: View {
 
                 if mostrarVencedor {
                     Text("Participante sorteado!")
-                        .font(.system(size: 20).width(.expanded))
+                        .font(.system(size: 17).width(.expanded))
                         .foregroundStyle(.white)
                         .frame(height: 75)
                         .transition(.opacity)
@@ -65,7 +65,7 @@ struct SalaEsperaView: View {
                         ? "Sorteio em andamento..."
                         : "Aguardando Host\niniciar o sorteio..."
                     )
-                    .font(.system(size: 20).width(.expanded))
+                    .font(.system(size: 17).width(.expanded))
                     .multilineTextAlignment(.center)
                     .foregroundStyle(.white)
                     .frame(height: 75)

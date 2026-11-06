@@ -75,22 +75,16 @@ class HostService: ObservableObject {
                     }) else { return }
 
                     player.receiveNickname { nickname in
+                        print("Jogador conectado: \(nickname)")
+
                         DispatchQueue.main.async {
                             print("Jogador identificado: \(nickname)")
                             self.objectWillChange.send()
+                            self.broadcastParticipants()
                         }
-                    }
-
-                case .failed(let error):
-                    print("Jogador desconectado: \(error)")
-                    self.removePlayer(for: connection)
-
-                case .cancelled:
-                    print("Conexão encerrada")
-                    self.removePlayer(for: connection)
-
-                default:
-                    break
+                    }            }
+                if case .none = self.listener {
+                    print("ndajsbhdjbhsa")
                 }
             }
             connection.start(queue: .main)
@@ -142,16 +136,63 @@ class HostService: ObservableObject {
         return address
     }
     
-    private func removePlayer(for connection: NWConnection) {
+    func broadcastParticipants() {
 
-        connections.removeAll {
-            $0 === connection
+        let nomes = players.compactMap { $0.nickname }
+
+        let mensagem: [String: Any] = [
+            "type": "participants",
+            "names": nomes
+        ]
+
+        guard let json = try? JSONSerialization.data(
+            withJSONObject: mensagem
+        ) else {
+            return
         }
 
-        players.removeAll {
-            $0.connection === connection
+        var dados = json
+        dados.append(0x0A) // Quebra de linha
+
+        for connection in connections {
+            connection.send(
+                content: dados,
+                completion: .contentProcessed { error in
+                    if let error {
+                        print("Erro ao enviar participantes: \(error)")
+                    }
+                }
+            )
+        }
+        print("Enviando participantes:", nomes)
+    }
+    func broadcastDrawResult(winner: String) {
+
+        let mensagem: [String: Any] = [
+            "type": "draw_result",
+            "winner": winner
+        ]
+
+        guard let json = try? JSONSerialization.data(
+            withJSONObject: mensagem
+        ) else {
+            return
         }
 
-        connection.stateUpdateHandler = nil
+        var dados = json
+        dados.append(0x0A)
+
+        for connection in connections {
+            connection.send(
+                content: dados,
+                completion: .contentProcessed { error in
+                    if let error {
+                        print("Erro ao enviar vencedor: \(error)")
+                    }
+                }
+            )
+        }
+
+        print("Vencedor enviado aos App Clips:", winner)
     }
 }

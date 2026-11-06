@@ -97,15 +97,12 @@ struct SalaView: View {
                 guard let sorteado = participantes.randomElement() else {
                     return
                 }
-
-                // Esconde o resultado anterior
                 mostrarVencedor = false
-
-                // Define o vencedor e inicia a roleta
                 vencedor = sorteado
                 sorteioID = UUID()
                 sorteando = true
-
+                hostService.broadcastDrawResult(winner: sorteado)
+                
                 // Aguarda os 5 segundos da animação da roleta
                 Task {
                     try? await Task.sleep(for: .seconds(5))
@@ -135,7 +132,7 @@ struct SalaView: View {
             QRCodeSheetView(salaID: salaID)
         }
         .sheet(isPresented: $mostrarQRAppClip) {
-            QrCodeAppClip()
+            QrCodeAppClip(salaID: salaID)
         }
     }
 }

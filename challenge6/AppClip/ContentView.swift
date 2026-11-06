@@ -91,9 +91,7 @@ struct ContentView: View {
                     .offset(y: 10)
                 }
 
-
                 if !nicknameEmFoco {
-
                     Button {
                         nicknameEmFoco = false
                         mostrandoScanner = true

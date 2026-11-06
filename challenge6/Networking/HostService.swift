@@ -52,14 +52,45 @@ class HostService: ObservableObject {
             players.append(player)
             //print(player.nickname ?? "erro ao criar player")
 
-            connection.stateUpdateHandler = { state in
-                if case .ready = state {
+//            connection.stateUpdateHandler = { state in
+//                if case .ready = state {
+//                    player.receiveNickname { nickname in
+//                        print("Jogador conectado: \(nickname)")
+//                        self.objectWillChange.send()   
+//                    }                }
+//                if case .none = self.listener {
+//                    print("ndajsbhdjbhsa")
+//                }
+//            }
+            connection.stateUpdateHandler = { [weak self, weak connection] state in
+                guard let self, let connection else { return }
+
+                switch state {
+
+                case .ready:
+                    print("Jogador conectado: \(connection.endpoint)")
+
+                    guard let player = self.players.first(where: {
+                        $0.connection === connection
+                    }) else { return }
+
                     player.receiveNickname { nickname in
-                        print("Jogador conectado: \(nickname)")
-                        self.objectWillChange.send()   
-                    }                }
-                if case .none = self.listener {
-                    print("ndajsbhdjbhsa")
+                        DispatchQueue.main.async {
+                            print("Jogador identificado: \(nickname)")
+                            self.objectWillChange.send()
+                        }
+                    }
+
+                case .failed(let error):
+                    print("Jogador desconectado: \(error)")
+                    self.removePlayer(for: connection)
+
+                case .cancelled:
+                    print("Conexão encerrada")
+                    self.removePlayer(for: connection)
+
+                default:
+                    break
                 }
             }
             connection.start(queue: .main)
@@ -109,5 +140,18 @@ class HostService: ObservableObject {
             address = String(cString: host)
         }
         return address
+    }
+    
+    private func removePlayer(for connection: NWConnection) {
+
+        connections.removeAll {
+            $0 === connection
+        }
+
+        players.removeAll {
+            $0.connection === connection
+        }
+
+        connection.stateUpdateHandler = nil
     }
 }

@@ -10,6 +10,7 @@ import SwiftUI
 
 struct ContentView: View {
 
+    @State private var mostrarSalaEspera = false
     @State private var salaID: String = ""
     @State private var nickname: String = ""
     @State private var mostrandoScanner = false
@@ -126,27 +127,32 @@ struct ContentView: View {
             }
         }
         .background {
-            RadialGradient(
-                colors: [
-                    Color("RoxoClaro"),
-                    Color("RoxoEscuro")
-                ],
-                center: .center,
-                startRadius: 0,
-                endRadius: 450
-            )
-            .ignoresSafeArea()
+            Image("fundo")
+                .resizable()
+                .scaledToFill()
+                .ignoresSafeArea()
         }
         .sheet(isPresented: $mostrandoScanner) {
             QRScannerView { text in
-                mostrandoScanner = false
-
                 if let (host, port) = parseHost(text) {
                     clientService.nickname = nickname
+                    clientService.onConnected = {
+                        DispatchQueue.main.async {
+                            mostrandoScanner = false
+                            mostrarSalaEspera = true
+                        }
+                    }
                     clientService.connect(to: host, port: port)
+
+                } else {
+                    print("QR Code de conexão inválido")
                 }
             }
         }
+        .fullScreenCover(isPresented: $mostrarSalaEspera) {
+            SalaEsperaView(salaID: salaID, clientService: clientService)
+        }
+        
         .onContinueUserActivity(
             NSUserActivityTypeBrowsingWeb
         ) { activity in

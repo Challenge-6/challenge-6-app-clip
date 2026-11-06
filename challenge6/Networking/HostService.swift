@@ -56,8 +56,12 @@ class HostService: ObservableObject {
                 if case .ready = state {
                     player.receiveNickname { nickname in
                         print("Jogador conectado: \(nickname)")
-                        self.objectWillChange.send()   
-                    }                }
+
+                        DispatchQueue.main.async {
+                            self.objectWillChange.send()
+                            self.broadcastParticipants()
+                        }
+                    }            }
                 if case .none = self.listener {
                     print("ndajsbhdjbhsa")
                 }
@@ -109,5 +113,65 @@ class HostService: ObservableObject {
             address = String(cString: host)
         }
         return address
+    }
+    
+    func broadcastParticipants() {
+
+        let nomes = players.compactMap { $0.nickname }
+
+        let mensagem: [String: Any] = [
+            "type": "participants",
+            "names": nomes
+        ]
+
+        guard let json = try? JSONSerialization.data(
+            withJSONObject: mensagem
+        ) else {
+            return
+        }
+
+        var dados = json
+        dados.append(0x0A) // Quebra de linha
+
+        for connection in connections {
+            connection.send(
+                content: dados,
+                completion: .contentProcessed { error in
+                    if let error {
+                        print("Erro ao enviar participantes: \(error)")
+                    }
+                }
+            )
+        }
+        print("Enviando participantes:", nomes)
+    }
+    func broadcastDrawResult(winner: String) {
+
+        let mensagem: [String: Any] = [
+            "type": "draw_result",
+            "winner": winner
+        ]
+
+        guard let json = try? JSONSerialization.data(
+            withJSONObject: mensagem
+        ) else {
+            return
+        }
+
+        var dados = json
+        dados.append(0x0A)
+
+        for connection in connections {
+            connection.send(
+                content: dados,
+                completion: .contentProcessed { error in
+                    if let error {
+                        print("Erro ao enviar vencedor: \(error)")
+                    }
+                }
+            )
+        }
+
+        print("Vencedor enviado aos App Clips:", winner)
     }
 }

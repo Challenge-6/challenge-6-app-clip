@@ -218,56 +218,132 @@ struct ContentView: View {
                 .ignoresSafeArea()
         }
     }
+    
+//    private var telaInicial: some View {
+//
+//        VStack(spacing: 24) {
+//
+//            Image(systemName: "person.3.fill")
+//                .font(.system(size: 60))
+//                .foregroundStyle(.blue)
+//
+//            Text("Olá, \(nickname)!")
+//                .font(.largeTitle)
+//                .bold()
+//
+//            Text("O que deseja fazer?")
+//                .foregroundStyle(.secondary)
+//
+//            Button {
+//                let novoID = String(UUID().uuidString.prefix(6))
+//
+//                print("ID gerado:", novoID)
+//                server.initListener()
+//
+//                salaCriada = Sala(id: novoID)
+//
+//            } label: {
+//                Label("Criar sala", systemImage: "plus.circle")
+//                    .frame(maxWidth: .infinity)
+//                    .padding()
+//                
+//            }
+//            .buttonStyle(.borderedProminent)
+//            
+//            Button {
+//                mostrarEntradaSala = true
+//            } label: {
+//                Label("Entrar na sala", systemImage: "arrow.right.circle")
+//                    .frame(maxWidth: .infinity)
+//                    .padding()
+//            }
+//            .buttonStyle(.bordered)
+//
+//            Button("Alterar nome") {
+//                nickname = ""
+//                nomeDigitado = ""
+//            }
+//            .font(.footnote)
+//
+//        }
+//        .padding()
+//    }
+    
+    
+    private let roxoBotao = Color(red: 0.08, green: 0.03, blue: 0.25)
+
     private var telaInicial: some View {
+        VStack(spacing: 0) {
 
-        VStack(spacing: 24) {
-
-            Image(systemName: "person.3.fill")
-                .font(.system(size: 60))
-                .foregroundStyle(.blue)
+            Image("logoPavao")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 200)
+                .padding(.bottom, 12)
 
             Text("Olá, \(nickname)!")
-                .font(.largeTitle)
-                .bold()
+                .font(.system(size: 30, weight: .heavy))
+                .fontWidth(.expanded)
+                .foregroundStyle(Color("Amarelo"))
+                .shadow(color: .black.opacity(0.25), radius: 6, y: 4)
+
+            Button {
+                nickname = ""
+                nomeDigitado = ""
+            } label: {
+                Label("Alterar apelido", systemImage: "pencil")
+                    .font(.system(size: 14))
+                    .fontWidth(.expanded)
+                    .underline()
+            }
+            .foregroundStyle(.white)
+            .padding(.top, 8)
 
             Text("O que deseja fazer?")
-                .foregroundStyle(.secondary)
+                .font(.system(size: 20))
+                .fontWidth(.expanded)
+                .foregroundStyle(.white)
+                .padding(.top, 35)
 
             Button {
                 let novoID = String(UUID().uuidString.prefix(6))
-
                 print("ID gerado:", novoID)
                 server.initListener()
-
                 salaCriada = Sala(id: novoID)
-
             } label: {
-                Label("Criar sala", systemImage: "plus.circle")
+                Label("Criar Sala", systemImage: "plus.circle")
+                    .font(.system(size: 20, weight: .bold))
+                    .fontWidth(.expanded)
+                    .foregroundStyle(roxoBotao)
                     .frame(maxWidth: .infinity)
-                    .padding()
-                
+                    .frame(height: 50)
+                    .background(Color("Amarelo"), in: Capsule())
             }
-            .buttonStyle(.borderedProminent)
-            
+            .padding(.top, 28)
+
             Button {
                 mostrarEntradaSala = true
             } label: {
                 Label("Entrar na sala", systemImage: "arrow.right.circle")
+                    .font(.system(size: 20, weight: .bold))
+                    .fontWidth(.expanded)
+                    .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
-                    .padding()
+                    .frame(height: 50)
+                    .background(roxoBotao, in: Capsule())
             }
-            .buttonStyle(.bordered)
-
-            Button("Alterar nome") {
-                nickname = ""
-                nomeDigitado = ""
-            }
-            .font(.footnote)
-
+            .padding(.top, 18)
         }
-        .padding()
+        .padding(.horizontal, 52)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background {
+            Image("fundo")
+                .resizable()
+                .scaledToFill()
+                .ignoresSafeArea()
+        }
     }
-    
+
     private func receberURL(_ url: URL) {
         guard let components = URLComponents(
             url: url,

@@ -18,6 +18,7 @@ struct SalaEsperaView: View {
     @State private var sorteioID: UUID?
     @State private var sorteando = false
     @State private var mostrarVencedor = false
+    @State private var mostrarConfete = false
 
     var body: some View {
 
@@ -108,6 +109,12 @@ struct SalaEsperaView: View {
                     .ignoresSafeArea()
             }
         }
+        .overlay {
+            if mostrarConfete {
+                ConfettiView()
+                    .ignoresSafeArea()
+            }
+        }
         .onAppear {
             participantes = clientService.participantes
             clientService.onParticipantsUpdated = { nomes in
@@ -128,6 +135,8 @@ struct SalaEsperaView: View {
 
         mostrarVencedor = false
         sorteando = true
+        mostrarConfete = true
+
 
         vencedor = nome
         sorteioID = UUID()

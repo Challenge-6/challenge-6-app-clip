@@ -40,8 +40,8 @@ struct RoletaView: View {
     @State private var rotacao: Double = 0
 
     private let cores: [Color] = [
-        .blue, .orange, .purple, .green,
-        .pink, .cyan, .indigo, .mint
+        Color("AzulRoleta"), Color("LaranjaRoleta"), Color("RoxoRoleta"), Color("AzulClaroRoleta"),
+        Color("Amarelo"), Color("AmareloRoleta"), Color("SalmaoRoleta")
     ]
 
     var body: some View {
@@ -91,7 +91,7 @@ struct RoletaView: View {
                                     size: quantidade > 8 ? 10 : 14,
                                     weight: .semibold
                                 ))
-                                .foregroundStyle(.white)
+                                .foregroundStyle(.black)
                                 .lineLimit(1)
                                 .minimumScaleFactor(0.5)
                                 .frame(width: tamanho * 0.30)
@@ -107,19 +107,18 @@ struct RoletaView: View {
 
                     Circle()
                         .fill(.white)
-                        .frame(width: 24, height: 24)
-                        .shadow(radius: 2)
+                        .frame(width: 5, height: 5)
                 }
                 .rotationEffect(.degrees(rotacao))
 
                 // Seta fixa no topo
                 Image(systemName: "arrowtriangle.down.fill")
-                    .font(.system(size: 32))
-                    .foregroundStyle(.red)
+                    .font(.system(size: 50))
+                    .foregroundStyle(.white)
                     .shadow(radius: 2)
                     .position(
                         x: tamanho / 2,
-                        y: 4
+                        y: -5
                     )
             }
             .frame(width: tamanho, height: tamanho)

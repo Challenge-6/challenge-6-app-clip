@@ -95,7 +95,7 @@ struct RoletaView: View {
                                 .lineLimit(1)
                                 .minimumScaleFactor(0.5)
                                 .frame(width: tamanho * 0.30)
-                                .rotationEffect(.degrees(meio + 90))
+                                .rotationEffect(.degrees(meio))
                                 .position(
                                     x: tamanho / 2 +
                                         cos(meio * .pi / 180) * tamanho * 0.30,

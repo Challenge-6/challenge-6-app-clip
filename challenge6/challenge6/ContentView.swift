@@ -28,7 +28,8 @@ struct ContentView: View {
                 }
             }
             .navigationDestination(item: $salaCriada) { sala in
-                SalaView(salaID: sala.id, hostService: server)   
+                //SalaView(salaID: sala.id, hostService: server)
+                SalaCriadaView(salaID: sala.id, hostService: server)
             }
             .sheet(isPresented: $mostrandoScanner) {
                 QRScannerView { text in

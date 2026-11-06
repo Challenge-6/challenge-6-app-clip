@@ -52,16 +52,6 @@ class HostService: ObservableObject {
             players.append(player)
             //print(player.nickname ?? "erro ao criar player")
 
-//            connection.stateUpdateHandler = { state in
-//                if case .ready = state {
-//                    player.receiveNickname { nickname in
-//                        print("Jogador conectado: \(nickname)")
-//                        self.objectWillChange.send()   
-//                    }                }
-//                if case .none = self.listener {
-//                    print("ndajsbhdjbhsa")
-//                }
-//            }
             connection.stateUpdateHandler = { [weak self, weak connection] state in
                 guard let self, let connection else { return }
 
@@ -78,13 +68,21 @@ class HostService: ObservableObject {
                         print("Jogador conectado: \(nickname)")
 
                         DispatchQueue.main.async {
-                            print("Jogador identificado: \(nickname)")
                             self.objectWillChange.send()
                             self.broadcastParticipants()
                         }
-                    }            }
-                if case .none = self.listener {
-                    print("ndajsbhdjbhsa")
+                    }
+
+                case .failed(let error):
+                    print("Jogador desconectado: \(error)")
+                    self.removePlayer(for: connection)
+
+                case .cancelled:
+                    print("Conexão encerrada")
+                    self.removePlayer(for: connection)
+
+                default:
+                    break
                 }
             }
             connection.start(queue: .main)
@@ -134,6 +132,16 @@ class HostService: ObservableObject {
             address = String(cString: host)
         }
         return address
+    }
+    
+    private func removePlayer(for connection: NWConnection) {
+        connections.removeAll { $0 === connection }
+        players.removeAll { $0.connection === connection }
+        connection.stateUpdateHandler = nil
+        connection.cancel()
+
+        // avisa os outros participantes que a lista mudou
+        broadcastParticipants()
     }
     
     func broadcastParticipants() {

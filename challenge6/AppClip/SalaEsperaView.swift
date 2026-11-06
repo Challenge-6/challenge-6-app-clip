@@ -53,23 +53,13 @@ struct SalaEsperaView: View {
                 Spacer()
                     .frame(height: 35)
 
-                if mostrarVencedor, let vencedor {
-
-                    VStack(spacing: 8) {
-
-                        Text("Participante sorteado!")
-                            .font(.system(size: 20).width(.expanded))
-                            .foregroundStyle(.white)
-
-                        Text(vencedor)
-                            .font(.system(size: 28, weight: .bold).width(.expanded))
-                            .foregroundStyle(Color("Amarelo"))
-                    }
-                    .frame(height: 75)
-                    .transition(.opacity.combined(with: .move(edge: .bottom)))
-
+                if mostrarVencedor {
+                    Text("Participante sorteado!")
+                        .font(.system(size: 20).width(.expanded))
+                        .foregroundStyle(.white)
+                        .frame(height: 75)
+                        .transition(.opacity)
                 } else {
-
                     Text(
                         sorteando
                         ? "Sorteio em andamento..."
@@ -84,9 +74,22 @@ struct SalaEsperaView: View {
                 Spacer()
                     .frame(height: 20)
 
-                RoundedRectangle(cornerRadius: 25)
-                    .stroke(.white, lineWidth: 1.5)
-                    .frame(width: 250, height: 45)
+                ZStack {
+                    RoundedRectangle(cornerRadius: 25)
+                        .stroke(.white, lineWidth: 1.5)
+
+                    if mostrarVencedor, let vencedor {
+                        Text(vencedor)
+                            .font(.system(size: 22, weight: .bold).width(.expanded))
+                            .foregroundStyle(Color("Amarelo"))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.7)
+                            .padding(.horizontal, 16)
+                            .transition(.opacity.combined(with: .scale(scale: 0.8)))
+                    }
+                }
+                .frame(width: 250, height: 45)
+                .animation(.spring(response: 0.5, dampingFraction: 0.7), value: mostrarVencedor)
 
                 Spacer()
             }

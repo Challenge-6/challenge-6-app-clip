@@ -184,6 +184,13 @@ struct SalaView: View {
             QRCodeSheetView(salaID: salaID)
         }
         .toolbar(.hidden, for: .navigationBar)
+        .overlay {
+            if mostrarVencedor {
+                ConfettiView()
+                    .ignoresSafeArea()
+                    .zIndex(10)
+            }
+        }
     }
 
     private func iniciarSorteio() {

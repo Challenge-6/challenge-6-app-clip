@@ -59,6 +59,7 @@
 		7BB846E5309BA57C003ABAA6 /* Exceptions for "challenge6" folder in "AppClip" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				animacaoConfete.swift,
 				EntrarSalaView.swift,
 				Player.swift,
 				QrCodeAppClip.swift,

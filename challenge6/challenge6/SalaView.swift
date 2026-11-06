@@ -5,148 +5,220 @@
 //  Created by Gabriel Groppo on 29/10/26.
 //
 
+
 import SwiftUI
 
 struct SalaView: View {
 
     let salaID: String
+
     @ObservedObject var hostService: HostService
-    @State private var mostrarQRAppClip = false
-    private let qrCodeGenerator = QRCodeGenerator()
+    @Environment(\.dismiss) private var dismiss
     
     @State private var mostrarQRCode = false
     @State private var sorteando = false
     @State private var mostrarVencedor = false
+    @State private var vencedor: String?
+    @State private var sorteioID: UUID?
+
     private var participantes: [String] {
         hostService.players.compactMap { $0.nickname }
     }
 
-    // Resultado do sorteio
-    @State private var vencedor: String?
-    @State private var sorteioID: UUID?
-
     var body: some View {
 
-        VStack(spacing: 24) {
+        GeometryReader { geometry in
 
-            Text("Sala \(salaID)")
-                .font(.title2)
-                .bold()
+            VStack(spacing: 0) {
 
-            Button {
-                mostrarQRCode = true
-            } label: {
-                Label(
-                    "Convidar participantes",
-                    systemImage: "qrcode"
-                )
-                .frame(maxWidth: 240)
-                .padding(5)
-            }
-            .buttonStyle(.borderedProminent)
-            
-            Button {
-                mostrarQRAppClip = true
-            } label: {
-                Label(
-                    "App clip",
-                    systemImage: "qrcode"
-                )
-                .frame(maxWidth: 240)
-                .padding(5)
-            }
-            .buttonStyle(.borderedProminent)
+                Spacer()
+                    .frame(height: 20)
 
+                Text("Sorteiaí")
+                    .font(.system(size: 34, weight: .bold).width(.expanded))
+                    .foregroundStyle(Color("Amarelo"))
 
-            // Roleta dinâmica
-            RoletaView(
-                participantes: participantes,
-                vencedor: vencedor,
-                sorteioID: sorteioID
-            )
-            .frame(width: 300, height: 300)
+                Spacer()
+                    .frame(height: 20)
 
-            Text("\(participantes.count) participantes")
-                .foregroundStyle(.secondary)
+                Text("Sala: \(salaID)")
+                    .font(.system(size: 20).width(.expanded))
+                    .foregroundStyle(.white)
 
-            if mostrarVencedor, let vencedor {
-                VStack(spacing: 8) {
+                Spacer()
+                    .frame(height: 25)
 
-                    Image(systemName: "trophy.fill")
-                        .font(.system(size: 36))
-                        .foregroundStyle(.yellow)
-
-                    Text("Participante sorteado!")
-                        .font(.headline)
-                        .foregroundStyle(.secondary)
-
-                    Text(vencedor)
-                        .font(.largeTitle)
-                        .bold()
-                        .foregroundStyle(.primary)
-                }
-                .frame(maxWidth: .infinity)
-                .transition(
-                    .opacity.combined(
-                        with: .move(edge: .bottom)
+                Button {
+                    mostrarQRCode = true
+                } label: {
+                    Label(
+                        "Convidar participantes",
+                        systemImage: "qrcode"
                     )
-                )
-            }
-
-            Button {
-                guard let sorteado = participantes.randomElement() else {
-                    return
+                    .font(.system(size: 17, weight: .semibold).width(.expanded))
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 48)
+                    .background(
+                        Color("RoxoEscuroBotao"),
+                        in: Capsule()
+                    )
                 }
-                mostrarVencedor = false
-                vencedor = sorteado
-                sorteioID = UUID()
-                sorteando = true
-                hostService.broadcastDrawResult(winner: sorteado)
-                
-                // Aguarda os 5 segundos da animação da roleta
-                Task {
-                    try? await Task.sleep(for: .seconds(5))
+                .padding(.horizontal, 55)
 
-                    withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
-                        mostrarVencedor = true
-                        sorteando = false
+                Spacer()
+                    .frame(height: 30)
+
+                RoletaView(
+                    participantes: participantes,
+                    vencedor: vencedor,
+                    sorteioID: sorteioID
+                )
+                .frame(
+                    width: min(310, geometry.size.width - 40),
+                    height: min(310, geometry.size.width - 40)
+                )
+
+                Spacer()
+                    .frame(height: 15)
+
+                Text("\(participantes.count) participantes")
+                    .font(.system(size: 17).width(.expanded))
+                    .foregroundStyle(.white)
+
+                Spacer()
+                    .frame(height: 20)
+
+                Button {
+                    iniciarSorteio()
+                } label: {
+                    HStack{
+                        Image(systemName: "play")
+                            .padding(.leading)
+                            .font(.system(size: 20, weight: .semibold))
+                            .foregroundStyle(Color("RoxoEscuroBotao"))
+                        
+                        Text("Sortear participante")
+                            .padding(.trailing)
+                            .font(.system(size: 19, weight: .bold).width(.expanded))
+                            .foregroundStyle(Color("RoxoEscuroBotao"))
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 48)
+                            
+                    }
+                    .background(
+                        Color("Amarelo"),
+                        in: Capsule()
+                    )
+                }
+                .disabled(participantes.isEmpty || sorteando)
+                .padding(.horizontal, 50)
+
+                Spacer()
+                    .frame(height: 25)
+
+                if mostrarVencedor {
+                    Text("Participante sorteado!")
+                        .font(.system(size: 20).width(.expanded))
+                        .foregroundStyle(.white)
+                } else {
+                    Text(
+                        sorteando
+                        ? "Sorteio em andamento..."
+                        : "Aguardando sorteio..."
+                    )
+                    .font(.system(size: 20).width(.expanded))
+                    .foregroundStyle(.white)
+                }
+
+                Spacer()
+                    .frame(height: 12)
+
+                ZStack {
+
+                    RoundedRectangle(cornerRadius: 25)
+                        .stroke(.white, lineWidth: 1.5)
+
+                    if mostrarVencedor, let vencedor {
+                        Text(vencedor)
+                            .font(.system(size: 22, weight: .bold).width(.expanded))
+                            .foregroundStyle(Color("Amarelo"))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.7)
+                            .padding(.horizontal, 16)
+                            .transition(.opacity)
                     }
                 }
+                .frame(width: 250, height: 45)
 
-            } label: {
-                Label(
-                    "Sortear participante",
-                    systemImage: "play.fill"
-                )
-                .frame(maxWidth: 240)
+                Spacer()
             }
-            .buttonStyle(.borderedProminent)
-            .disabled(participantes.isEmpty || sorteando)
-
-            Spacer()
+            .frame(maxWidth: .infinity)
+            .frame(height: geometry.size.height)
         }
-        .padding()
-        .navigationTitle("Sorteio")
-        .navigationBarTitleDisplayMode(.inline)
+        .overlay(alignment: .topLeading) {
+            Button {
+                dismiss()
+            } label: {
+                Image(systemName: "chevron.left")
+                    .font(.system(size: 20, weight: .bold))
+                    .foregroundStyle(.white)
+                    .frame(width: 44, height: 44)
+            }
+            .padding(.leading, 16)
+        }
+        .background {
+            ZStack {
+                Image("fundo")
+                    .resizable()
+                    .scaledToFill()
+                    .ignoresSafeArea()
+
+                Image("detalheFundo")
+                    .resizable()
+                    .scaledToFill()
+                    .ignoresSafeArea()
+            }
+        }
         .sheet(isPresented: $mostrarQRCode) {
             QRCodeSheetView(salaID: salaID)
         }
-        .sheet(isPresented: $mostrarQRAppClip) {
-            QrCodeAppClip(salaID: salaID)
-        }
+        .toolbar(.hidden, for: .navigationBar)
     }
-}
 
-struct PlayerRow: View {
-    @ObservedObject var player: Player
+    private func iniciarSorteio() {
 
-    var body: some View {
-        Text(player.nickname ?? "...")
+        guard let sorteado = participantes.randomElement() else {
+            return
+        }
+
+        mostrarVencedor = false
+
+        vencedor = sorteado
+        sorteioID = UUID()
+        sorteando = true
+
+        hostService.broadcastDrawResult(winner: sorteado)
+
+        Task {
+            try? await Task.sleep(for: .seconds(5))
+
+            withAnimation(.spring(
+                response: 0.5,
+                dampingFraction: 0.7
+            )) {
+                mostrarVencedor = true
+                sorteando = false
+            }
+        }
     }
 }
 
 #Preview {
     NavigationStack {
-        SalaView(salaID: "ABC123", hostService: HostService())
+        SalaView(
+            salaID: "ABC123",
+            hostService: HostService()
+        )
     }
 }

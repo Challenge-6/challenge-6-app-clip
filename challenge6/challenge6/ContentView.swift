@@ -9,7 +9,6 @@ struct ContentView: View {
     @AppStorage("nickname") private var nickname = ""
 
     @State private var salaRecebidaID: String?
-    //@State private var mostrarEntradaSala = false
     @State private var salaCriada: Sala?
     @State private var nomeDigitado = ""
     @StateObject private var server = HostService()
@@ -28,7 +27,6 @@ struct ContentView: View {
                 }
             }
             .navigationDestination(item: $salaCriada) { sala in
-                //SalaView(salaID: sala.id, hostService: server)
                 SalaCriadaView(salaID: sala.id, hostService: server)
             }
             .sheet(isPresented: $mostrandoScanner) {
@@ -90,8 +88,6 @@ struct ContentView: View {
                     .frame(height: nomeEmFoco ? 25 : 40)
 
                 if !nomeEmFoco {
-
-                    // Ocupa o lugar do "Sala: ..." do App Clip (texto 20pt + 36)
                     Spacer()
                         .frame(height: 60)
 

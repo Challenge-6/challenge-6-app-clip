@@ -22,6 +22,10 @@ struct QRCodeSheetView: View {
     private var enderecoConexao: String {
         "\(hostService.localIPAddress() ?? ""):5252"
     }
+    
+    private var textoQR: String {
+        "\(enderecoConexao):\(salaID)"
+    }
 
     var body: some View {
 

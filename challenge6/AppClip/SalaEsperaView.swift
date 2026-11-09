@@ -110,7 +110,7 @@ struct SalaEsperaView: View {
             }
         }
         .overlay {
-            if mostrarConfete {
+            if mostrarVencedor {
                 ConfettiView()
                     .ignoresSafeArea()
             }

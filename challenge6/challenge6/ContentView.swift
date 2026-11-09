@@ -16,6 +16,7 @@ struct ContentView: View {
     @State private var mostrandoScanner = false
     @State private var entrouNaSala = false
     @State private var clientService = ClientService()
+    @State private var salaEntradaID = ""
 
     var body: some View {
         NavigationStack {
@@ -31,13 +32,21 @@ struct ContentView: View {
             }
             .sheet(isPresented: $mostrandoScanner) {
                 QRScannerView { text in
-                    mostrandoScanner = false
                     if let (host, port) = parseHost(text) {
+                        salaEntradaID = parseSalaID(text) ?? ""
                         clientService.nickname = nickname
+                        clientService.onConnected = {
+                            DispatchQueue.main.async {
+                                mostrandoScanner = false
+                                entrouNaSala = true
+                            }
+                        }
                         clientService.connect(to: host, port: port)
-                        entrouNaSala = true
                     }
                 }
+            }
+            .fullScreenCover(isPresented: $entrouNaSala) {
+                SalaEsperaView(salaID: salaEntradaID, clientService: clientService)
             }
             .onContinueUserActivity(
                 NSUserActivityTypeBrowsingWeb
@@ -71,6 +80,7 @@ struct ContentView: View {
             }
         }
     }
+    
 
     private var telaCadastro: some View {
         GeometryReader { geometry in

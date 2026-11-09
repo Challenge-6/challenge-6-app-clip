@@ -64,6 +64,11 @@ final class ScannerController: UIViewController, AVCaptureMetadataOutputObjectsD
 
 func parseHost(_ text: String) -> (host: String, port: UInt16)? {
     let parts = text.split(separator: ":")
-    guard parts.count == 2, let port = UInt16(parts[1]) else { return nil }
+    guard parts.count >= 2, let port = UInt16(parts[1]) else { return nil }
     return (String(parts[0]), port)
+}
+
+func parseSalaID(_ text: String) -> String? {
+    let parts = text.split(separator: ":")
+    return parts.count == 3 ? String(parts[2]) : nil
 }

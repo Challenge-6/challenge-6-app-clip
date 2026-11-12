@@ -12,13 +12,13 @@ import Combine
 final class Player: ObservableObject, Identifiable {
 
     let id = UUID()
-    let connection: NWConnection
+    let connection: NWConnection    
     @Published var nickname: String?
 
     init(connection: NWConnection) {
         self.connection = connection
     }
-
+    
 
     func receiveNickname(completion: @escaping (String) -> Void) {
 

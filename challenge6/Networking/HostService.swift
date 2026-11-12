@@ -19,9 +19,6 @@ class HostService: ObservableObject {
     
     func initListener(){
         let parameters = NWParameters.tcp
-        //parameters.requiredInterfaceType = .loopback
-        //parameters.requiredLocalEndpoint = NWEndpoint.hostPort(host: "127.0.0.1", port: 8080)
-        
         do {
             listener = try NWListener(using: parameters, on: 5252)
         } catch {
@@ -32,7 +29,7 @@ class HostService: ObservableObject {
         listener?.stateUpdateHandler = { [weak self] state in
             switch state {
             case .ready:
-                print("escutando na porta 8080")
+                print("escutando na porta 5252")
             case .failed(let error):
                 print("escuta falhou: \(error)")
                 self?.listener?.cancel()

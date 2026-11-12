@@ -1,3 +1,10 @@
+//
+//  ContentView.swift
+//  challenge6
+//
+//  Created by Gabriel Groppo on 29/10/26.
+//
+
 import SwiftUI
 
 struct Sala: Identifiable, Hashable {
